@@ -6,7 +6,7 @@ from datetime import datetime
 class AuthenticationSystem:
     """User Authentication System Class"""
     
-    def __init__(self, data_file="users.txt"):
+    def __init__(self, data_file="users.json"):
         """
         Initialize authentication system
         
@@ -25,7 +25,7 @@ class AuthenticationSystem:
             self._save_users()
     
     def _load_users(self):
-        """Load user data from file"""
+        """Load user database JSON from file"""
         try:
             with open(self.data_file, 'r') as f:
                 users_data = json.load(f)
