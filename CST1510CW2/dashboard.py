@@ -6,3 +6,7 @@ if st.button("Data Science", use_container_width=True):
 
 if st.button("IT Operations", use_container_width=True):
     st.switch_page("pages/it_operations_dashboard.py")
+
+if st.session_state.get("role") != "admin":
+    st.error("You do not have permission to view this page.")
+    st.stop()

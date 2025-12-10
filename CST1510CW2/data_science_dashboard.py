@@ -57,3 +57,7 @@ def data_science_dashboard():
 
 if __name__ == "__main__":
     data_science_dashboard()
+
+if st.session_state.get("role") != "admin":
+    st.error("You do not have permission to view this page.")
+    st.stop()

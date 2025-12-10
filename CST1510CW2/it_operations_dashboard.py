@@ -67,3 +67,7 @@ def it_operations_dashboard():
 
 if __name__ == "__main__":
     it_operations_dashboard()
+
+if st.session_state.get("role") != "admin":
+    st.error("You do not have permission to view this page.")
+    st.stop()
