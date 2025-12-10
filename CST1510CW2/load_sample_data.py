@@ -24,3 +24,6 @@ def load_it_tickets():
 
 if __name__ == "__main__":
     load_it_tickets()
+
+from components.footer import render_footer
+render_footer()

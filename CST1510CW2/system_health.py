@@ -27,3 +27,6 @@ OS: {platform.system()}
 Release: {platform.release()}
 Python: {platform.python_version()}
 """)
+
+from components.footer import render_footer
+render_footer()

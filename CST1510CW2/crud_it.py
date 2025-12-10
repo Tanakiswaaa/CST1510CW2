@@ -18,3 +18,6 @@ def update_ticket_status(ticket_id, new status):
 
 def delete_ticket(ticket_id):
     db.execute_query("DELETE FROM it_tickets WHERE ticket_id = ?", (ticket_id,))
+
+from components.footer import render_footer
+render_footer()

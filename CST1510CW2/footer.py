@@ -8,3 +8,6 @@ def render_footer():
     Version 1.0 – Final Release  
     © {datetime.now().year}
     """)
+
+from components.footer import render_footer
+render_footer()

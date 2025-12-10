@@ -10,3 +10,6 @@ if st.button("IT Operations", use_container_width=True):
 if st.session_state.get("role") != "admin":
     st.error("You do not have permission to view this page.")
     st.stop()
+
+from components.footer import render_footer
+render_footer()

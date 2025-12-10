@@ -29,3 +29,6 @@ for idx, (label, domain_name, description) in enumerate(domains):
             # ADMIN PANEL
             elif domain_name == "admin":
                 st.info("Admin Panel coming in Week 10!")
+
+from components.footer import render_footer
+render_footer()

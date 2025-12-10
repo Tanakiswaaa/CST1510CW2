@@ -29,3 +29,6 @@ def migrate_users(json_file="users.json"):
 
 if __name__ == "main":
     migrate_users()
+
+from components.footer import render_footer
+render_footer()

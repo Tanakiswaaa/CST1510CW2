@@ -265,3 +265,6 @@ def command_line_interface():
 if __name__ == "__main__":
     # Run command line interface
     command_line_interface()
+
+from components.footer import render_footer
+render_footer()

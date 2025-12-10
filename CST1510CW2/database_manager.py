@@ -79,3 +79,5 @@ class databaseManager:
         for table in [users, it_tickets, cyber, datasets]:
             self.execute_query(table)
 
+from components.footer import render_footer
+render_footer()
