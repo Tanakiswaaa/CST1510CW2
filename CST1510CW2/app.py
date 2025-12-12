@@ -128,3 +128,30 @@ if __name__ == "__main__":
 
 from components.footer import render_footer
 render_footer()
+
+{
+  "admin_user": {
+    "password_hash": "$2b$12$kQw0r2w0pC5Tg8y5r3uKCO9KqZJmE2cG4QpNqfR5JxQe0CwqT1y3a",
+    "role": "admin",
+    "created_at": "2024-10-10T10:00:00",
+    "last_login": null
+  },
+  "alice_cyber": {
+    "password_hash": "$2b$12$CxHqKZrPqYw9hTtWjRr9mO/4B.srV3G9kZPuF9KnJxM3QnQZrP1eE",
+    "role": "cybersecurity",
+    "created_at": "2024-10-11T10:00:00",
+    "last_login": null
+  },
+  "bob_data": {
+    "password_hash": "$2b$12$M4Pqz5kqSgqL4vWjR9PqTe4yYwZVnD8nN8xkZPqV5B0fRjM1QeWqK",
+    "role": "data_science",
+    "created_at": "2024-10-11T10:00:00",
+    "last_login": null
+  },
+  "charlie_it": {
+    "password_hash": "$2b$12$Rkq3Y9f9kH2Fv5WqZp1MEOqvXn5FJmV7JZQn8R3KpZXp3yZ1wQ2aS",
+    "role": "it_operations",
+    "created_at": "2024-10-11T10:00:00",
+    "last_login": null
+  }
+}
