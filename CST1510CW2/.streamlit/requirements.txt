@@ -1,0 +1,7 @@
+streamlit>=1.18.1
+pandas
+plotly
+bcrypt
+psutil
+openpyxl
+xlrd

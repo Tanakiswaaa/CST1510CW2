@@ -5,7 +5,7 @@ import time
 
 st.set_page_config(page_title="System Health", layout="wide")
 
-st.title("🩺 System Health Monitor")
+st.title("System Health Monitor")
 
 col1, col2, col3 = st.columns(3)
 
@@ -20,7 +20,7 @@ with col3:
 
 st.markdown("---")
 
-st.subheader("🖥️ Host System Info")
+st.subheader("Host System Info")
 
 st.code(f"""
 OS: {platform.system()}

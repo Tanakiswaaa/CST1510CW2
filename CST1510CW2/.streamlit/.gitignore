@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+*.db-journal
+.env
+.streamlit/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+system.log
