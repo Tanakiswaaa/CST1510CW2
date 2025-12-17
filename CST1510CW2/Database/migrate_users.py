@@ -1,27 +1,36 @@
-import json
-from pathlib import Path
-from database_manager import databaseManager
+import sqlite3
+import hashlib
 
-def migrate_users(json_file="users.json"):
-    p = Path(json_file)
-    if not p.exists():
-        print("users.json not founf - skipping.")
-        return
-    db = databaseManager()
-    db.connect()
+DB_NAME = "intelligence_platform.db"
 
-    try:
-        with open(json_file, "r") as f:
-            users = json.load(f)
-        db = databaseManager()
-        db.create_tables_if_not_exist()
-        for username, data in user.items():
-            db.execute_query("""
-            INSERT OR IGNORE INTO users (username, password_hash, role, created_at, last_login)
-            VALUES (?, ?, ?, ?, ?)
-            """, (username, data.get("password_hash"), data.get("role"), data.get("created_at"), data.get("last_login")))                
-        print("Migration done.")
+DEFAULT_USERS = [
+    ("admin", "admin123", "admin"),
+    ("cyber_analyst", "cyber123", "cybersecurity"),
+    ("data_scientist", "data123", "data_science"),
+    ("it_support", "it123", "it_operations")
+]
 
-if __name__ == "main":
+def hash_password(password: str) -> str:
+    """Hash password using SHA-256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def migrate_users():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    for username, password, role in DEFAULT_USERS:
+        cursor.execute(
+            """
+            INSERT OR IGNORE INTO users (username, password_hash, role)
+            VALUES (?, ?, ?)
+            """,
+            (username, hash_password(password), role)
+        )
+
+    conn.commit()
+    conn.close()
+
+    print("Default users migrated successfully")
+
+if __name__ == "__main__":
     migrate_users()
-

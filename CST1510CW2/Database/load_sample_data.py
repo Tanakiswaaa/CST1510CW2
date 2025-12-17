@@ -1,54 +1,57 @@
 import pandas as pd
+import sqlite3
 from pathlib import Path
-from database_manager import databaseManager
 
-def load_it_tickets(csv_path="sample_data/it_tickets.csv"):
-    p = Path(csv_path)
-    if not p.exists():
-        print("No sample IT tickets CSV found.")
-        return
-    df = pd.read_csv(csv_path)
-    db = databaseManager()
-    db.create_tables_if_not_exist()
-    for _, r in df.iterrows():
-        db.execute_query("""
-            INSERT INTO it_tickets (title, category, status, assigned_to, created_date, resolved_date) 
-            VALUES (?, ?, ?, ?, ?, ?)            
-        """, (r.get('title'), r.get('category'), r.get('status'), r.get('assigned_to'), r.get('created_date'), r.get('resolved_date')))
-    print("IT tickets loaded.")
+DB_NAME = "intelligence_platform.db"
+DATA_DIR = Path("data")
 
-def load_cyber_incidents(csv_path="sample_data/cyber_incidents.csv"):
-    p = Path(csv_path)
-    if not p.exists():
-        print("No sample cyber CSV found.")
-        return
-    df = pd,read_csv(csv_path)       
-    db = databaseManager()
-    db.create_tables_if_not_exist()
-    for _, r in df.iterrows():
-        db.execute_query("""
-            INSERT INTO cyber_incidents (title, category, severity, status, assigned_to, description, created_date, resolved_date, resolution_time_hours)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (r.get('title'), r.get('category'), r.get('severity'), r.get('status'), r.get('assigned_to'), r.get('description'), r.get('created_date'), r.get('resolved_date'), r.get('resolution_time_hours')))
-    print("Cyber incidents loaded.")
+FILES = {
+    "cyber_incidents": "cyber_incidents.csv",
+    "datasets_metadata": "datasets_metadata.csv",
+    "it_tickets": "it_tickets.csv"
+}
 
-def load_datasets(csv_path="sample_data/datasets.csv"):
-    p = Path(csv_path)
-    if not p.exists():
-        print("No datasets CSV found.")
-        return
-    df = pd.read_csv(csv_path)
-    db = DatabaseManager()
-    db.create_tables_if_not_exist()
-    for _, r in df.iterrows():
-        db.execute_query("""
-            INSERT INTO datasets_metadata (dataset_name, rows, file_size_mb, department, quality_score)
-            VALUES (?, ?, ?, ?, ?)
-        """, (r.get('dataset_name'), r.get('rows'), r.get('file_size_mb'), r.get('department'), r.get('quality_score')))
-    print("Datasets loaded.")
-  
+def load_csv_to_db(table_name: str, csv_file: str):
+    """Load CSV into database table (replace on first load)"""
+    conn = sqlite3.connect(DB_NAME)
+
+    df = pd.read_csv(csv_file)
+
+    df.to_sql(
+        table_name,
+        conn,
+        if_exists="replace",   
+        index=False
+    )
+
+    conn.close()
+    print(f"Loaded {len(df)} rows into '{table_name}'")
+
+def main():
+    print("Loading project datasets...\n")
+
+    for table, file in FILES.items():
+        if Path(file).exists():
+            load_csv_to_db(table, file)
+        else:
+            print(f"Missing file: {file}")
+
+    print("\All datasets loaded successfully!")
+
+def validate_csv(df, required_columns: list, name: str):
+    missing = [col for col in required_columns if col not in df.columns]
+    if missing:
+        st.error(f"{name} CSV missing columns: {missing}")
+        return False
+    return True
+
+if validate_csv(cyber_df,
+    ['title', 'severity', 'status', 'assigned_to'],
+    'Cyber Incidents'):
+    cyber_df.to_sql('cyber_incidents', conn, if_exists='append', index=False)
+
+
 if __name__ == "__main__":
-    load_it_tickets()
-    load_cyber_incidents()
-    load_datasets()
+    main()
+
 

@@ -1,48 +1,68 @@
-import re
-import secrets
-from typing import Dict
-import sqlite3
-from datetime import datetime
+import bcrypt
+from database.db_manager import DatabaseManager
 
-class AdminSecurity:
-    @staticmethod
-    def validate_password_strength(password: str) -> Dict[str, bool]:
-        validations = {
-            'length': len(password) >= 8,
-            'uppercase': bool(re.search(r'[A-Z]', password)),
-            'lowercase': bool(re.search(r'[a-z]', password)),
-            'digit': bool(re.search(r'\d', password)),
-            'special': bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password)),
+def hash_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
+    return hashed.decode("utf-8")
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    return bcrypt.checkpw(
+        password.encode("utf-8"),
+        password_hash.encode("utf-8")
+    )
+
+
+def register_user(username: str, password: str, role: str) -> bool:
+    db = DatabaseManager()
+
+    existing = db.execute(
+        "SELECT id FROM users WHERE username = ?",
+        (username,),
+        fetchone=True
+    )
+
+    if existing:
+        return False
+
+    password_hash = hash_password(password)
+
+    db.execute(
+        """
+        INSERT INTO users (username, password_hash, role)
+        VALUES (?, ?, ?)
+        """,
+        (username, password_hash, role),
+        commit=True
+    )
+
+    return True
+
+
+def authenticate_user(username: str, password: str):
+    db = DatabaseManager()
+
+    user = db.execute(
+        """
+        SELECT id, username, password_hash, role
+        FROM users
+        WHERE username = ?
+        """,
+        (username,),
+        fetchone=True
+    )
+
+    if not user:
+        return None
+
+    user_id, uname, password_hash, role = user
+
+    if verify_password(password, password_hash):
+        return {
+            "id": user_id,
+            "username": uname,
+            "role": role
         }
-        return validations
 
-    @staticmethod
-    def generate_api_key() -> str:
-        return secrets.token_urlsafe(32)
-
-    @staticmethod
-    def audit_log(action: str, user: str, details: str = ""):
-        """Append audit log to DB table (creates table if missing)."""
-        try:
-            conn = sqlite3.connect('intelligence_platform.db')
-            c = conn.cursor()
-            c.execute('''
-            CREATE TABLE IF NOT EXISTS audit_logs (
-                log_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp TEXT,
-                action TEXT,
-                user TEXT,
-                details TEXT,
-                ip_address TEXT
-            )
-            ''')
-            c.execute("INSERT INTO audit_logs (timestamp, action, user, details) VALUES (?, ?, ?, ?)",
-                      (datetime.now().isoformat(), action, user, details))
-            conn.commit()
-        except Exception:
-            pass
-        finally:
-            try:
-                conn.close()
-            except:
-                pass
+    return None

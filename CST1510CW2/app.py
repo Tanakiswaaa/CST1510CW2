@@ -1,26 +1,47 @@
 import streamlit as st
-from components.layout import render_header
 
-st.set_page_config(page_title="Multi-Domain Intelligence Platform", layout="wide")
+st.set_page_config(
+    page_title="Multi-Domain Intelligence Platform",
+    layout="wide"
+)
 
-def main():
-    render_header()
-    st.markdown("Welcome! Use the menu to go to the login page.")
-    col1, col2 = st.columns([1,1])
-    with col1:
-        if st.button("Go to Login"):
-            st.experimental_set_query_params(page="login")
-            st.switch_page("pages/2_Login.py")
-    with col2:
-        if st.button("README"):
-            st.info("See README.md in the project root.")
-    from components.footer import render_footer
-    render_footer()
+st.markdown("""
+<style>
+footer {visibility: hidden;}
 
-if __name__ == "__main__":
-    main()
+.stButton>button {
+    border-radius: 8px;
+    font-weight: 600;
+}
 
-   
+[data-testid="metric-container"] {
+    background-color: #161B22;
+    border-radius: 10px;
+    padding: 1rem;
+}
 
+thead tr th {
+    background-color: #1f2933;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
 
+st.title("Multi-Domain Intelligence Platform")
 
+st.markdown(
+    """
+    Welcome to the Multi-Domain Intelligence Platform.
+
+    Use the sidebar to navigate between:
+    - Login
+    - Cybersecurity Dashboard
+    - Data Science Dashboard
+    - IT Operations Dashboard
+    """
+)
+
+st.info(
+    "This platform provides domain-specific intelligence, analytics, and AI-assisted insights "
+    "for cybersecurity, data governance, and IT operations."
+)

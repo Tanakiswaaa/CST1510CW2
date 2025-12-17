@@ -1,5 +1,5 @@
 import sqlite3
-from typing import Any, List, Tuple, Optional
+from typing import Any, Optional, Tuple
 
 class DatabaseManager:
     def __init__(self, db_path: str = "intel_platform.db"):
@@ -20,15 +20,14 @@ class DatabaseManager:
         cursor = conn.cursor()
         cursor.execute(query, params)
 
-        data = None
+        result = None
         if fetchone:
-            data = cursor.fetchone()
+            result = cursor.fetchone()
         elif fetchall:
-            data = cursor.fetchall()
+            result = cursor.fetchall()
 
         if commit:
             conn.commit()
 
         conn.close()
-        return data
-
+        return result

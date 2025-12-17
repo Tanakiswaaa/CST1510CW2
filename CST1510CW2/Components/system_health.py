@@ -1,32 +1,49 @@
 import streamlit as st
 import psutil
-import platform
+import sqlite3
 import time
+from datetime import datetime
 
-st.set_page_config(page_title="System Health", layout="wide")
+DB_NAME = "intelligence_platform.db"
 
-st.title("System Health Monitor")
+def system_health():
+    st.markdown("System Health Monitor")
 
-col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-with col1:
-    st.metric("CPU Usage", f"{psutil.cpu_percent()}%")
+    # CPU Usage
+    with col1:
+        cpu = psutil.cpu_percent(interval=1)
+        st.metric("CPU Usage", f"{cpu}%", "OK" if cpu < 75 else "High")
 
-with col2:
-    st.metric("Memory Usage", f"{psutil.virtual_memory().percent}%")
+    # Memory Usage
+    with col2:
+        memory = psutil.virtual_memory().percent
+        st.metric("Memory Usage", f"{memory}%", "OK" if memory < 75 else "High")
 
-with col3:
-    st.metric("Disk Usage", f"{psutil.disk_usage('/').percent}%")
+    # Disk Usage
+    with col3:
+        disk = psutil.disk_usage("/").percent
+        st.metric("Disk Usage", f"{disk}%", "OK" if disk < 80 else "High")
 
-st.markdown("---")
+    st.markdown("---")
 
-st.subheader("Host System Info")
+    # Database Health
+    st.markdown("Database Status")
 
-st.code(f"""
-OS: {platform.system()}
-Release: {platform.release()}
-Python: {platform.python_version()}
-""")
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM cyber_incidents")
+        incidents = cursor.fetchone()[0]
+        conn.close()
 
-from components.footer import render_footer
-render_footer()
+        st.success(f"Database connected successfully — {incidents} cyber incidents found")
+
+    except Exception as e:
+        st.error("Database connection failed")
+        st.code(str(e))
+
+    st.markdown("---")
+    st.caption(f"Last checked: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
