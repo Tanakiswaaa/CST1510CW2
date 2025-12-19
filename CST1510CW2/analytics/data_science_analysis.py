@@ -29,6 +29,9 @@ def dataset_sizes(df):
 
 
 def source_distribution(df):
-    return df["uploaded_by"].value_counts().reset_index(
-        name="dataset_count"
-    ).rename(columns={"index": "source"})
+    return (
+        df["uploaded_by"]
+        .value_counts()
+        .reset_index()
+        .rename(columns={"index": "source", "uploaded_by": "dataset_count"})
+    )
